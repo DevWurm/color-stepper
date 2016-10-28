@@ -2,7 +2,7 @@
   "name": "color-stepper",
   "version": "1.0.0-beta",
   "description": "A library / tool for generating color steps from a range of colors",
-  "main": "index.js",
+  "main": "lib/index.js",
   "scripts": {
     "clean": "rm -rf lib",
     "prebuild": "npm run clean",
