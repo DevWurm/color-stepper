@@ -1,8 +1,11 @@
 {
   "name": "color-stepper",
-  "version": "1.0.0-beta",
+  "version": "2.0.0-beta",
   "description": "A library / tool for generating color steps from a range of colors",
-  "main": "lib/src/index.js",
+  "main": "dist/lib/index.js",
+  "bin": {
+      "color-steps": "dist/bin/stepper.js"
+  },
   "scripts": {
     "clean": "rm -rf dist",
     "prebuild": "npm run clean",
