@@ -13,7 +13,7 @@ export function generateSteps(colorStrings, steps) {
     return colors.map(color => color.hex());
   } else {
     // divide number of needed steps by the number of gaps
-    const stepsPerGap = Math.floor((steps - colors.length) / (colors.length - 1));
+    const stepsPerGap = Math.ceil((steps - colors.length) / (colors.length - 1));
 
     const colorGaps = colors
       .map((_, ind) => {
