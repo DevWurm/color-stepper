@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 import { generateSteps } from '../lib';
 import color from 'onecolor';
 import printf from 'printf';
