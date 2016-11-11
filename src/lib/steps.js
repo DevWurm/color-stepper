@@ -9,54 +9,38 @@ import color from 'onecolor';
 export function generateSteps(colorStrings, steps) {
   const colors = colorStrings.map(str => color(str));
 
-  if (colors.length <= 1 || colors.length >= steps) {
+  if (colors.length <= 1) {
     return colors.map(color => color.hex());
+  } else if (steps <= 1) {
+    return [colors[Math.floor(colors.length / 2)].hex()]
   } else {
-    // divide number of needed steps by the number of gaps
-    const stepsPerGap = Math.ceil((steps - colors.length) / (colors.length - 1));
+    // generate the step width on the linear gradient
+    // of the provided colors (reduced by 1 because the gradient and the steps are 0-based)
+    const stepWidth = (colors.length - 1) / (steps - 1);
 
-    const colorGaps = colors
-      .map((_, ind) => {
-        if (ind == colors.length - 1) {
-          // ignore the last element, because there is no more gap after last element
-          return null;
-        }
+    let result = [];
+    for (let i = 0; i <= steps - 1; i++) {
+      result = result.concat([getGradientValue(colors, i * stepWidth)]);
+    }
 
-        return {
-          color1: colors[ind],
-          color2: colors[ind + 1]
-        }
-      })
-      // remove last element, because its not a gap
-      .slice(0, -1);
-
-    const filledColorGaps = colorGaps.map(gap => calculateSteps(gap, stepsPerGap));
-
-    // flatten array
-    const resultColors = [].concat.apply([], filledColorGaps)
-      // remove consecutive duplicates (end of the one gap is the beginning of the next gap)
-      .reduce((acc, curr) => (acc.length > 0 && acc[acc.length - 1].hex() == curr.hex()) ? acc : acc.concat([curr]), []);
-
-    return resultColors.map(color => color.hex());
+    return result.map(color => color.hex());
   }
 }
 
-function calculateSteps({color1, color2}, steps) {
-  const redStepWidth = (color2.red() - color1.red()) / (steps + 1);
-  const greenStepWidth = (color2.green() - color1.green()) / (steps + 1);
-  const blueStepWidth = (color2.blue() - color1.blue()) / (steps + 1);
-
-  const colors = [];
-  for (let i = 0; i < steps; i++) {
-   colors[i] = color('#000000')
-     .red(color1.red() + (redStepWidth * (i + 1)))
-     .green(color1.green() + (greenStepWidth * (i + 1)))
-     .blue(color1.blue() + (blueStepWidth * (i + 1)));
+/**
+ * Simulates a linear gradient from the colors in 'colors' over the argument 'arg'
+ */
+function getGradientValue(colors, arg) {
+  if (Math.floor(arg) >= colors.length - 1) {
+    return colors.slice(-1)[0];
   }
 
-  return [
-    color1,
-    ...colors,
-    color2
-  ];
+  const startColor = colors[Math.floor(arg)];
+  const endColor = colors[Math.floor(arg) + 1];
+  const relativeArg = arg - Math.floor(arg);
+
+  return color('#000000')
+    .red(startColor.red() + ((endColor.red() - startColor.red()) * relativeArg))
+    .green(startColor.green() + ((endColor.green() - startColor.green()) * relativeArg))
+    .blue(startColor.blue() + ((endColor.blue() - startColor.blue()) * relativeArg));
 }
